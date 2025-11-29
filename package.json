@@ -6,6 +6,10 @@
   "engines": {
     "node": ">=18.14.0"
   },
+  "overrides": {
+    "undici": "5.28.4",
+    "cheerio": "1.0.0-rc.12"
+  },
   "scripts": {
     "dev": "astro dev",
     "start": "astro dev",
