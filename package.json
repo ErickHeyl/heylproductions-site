@@ -1,31 +1,27 @@
 {
-  "name": "nextwedding.dev",
-  "version": "0.1.0",
+  "name": "astroship",
+  "type": "module",
+  "version": "0.0.1",
   "private": true,
   "scripts": {
-    "dev": "next dev --turbopack",
-    "build": "next build",
-    "start": "next start",
-    "lint": "next lint"
+    "dev": "astro dev",
+    "start": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "astro": "astro"
   },
   "dependencies": {
-    "next": "15.1.6",
-    "pg": "^8.13.1",
-    "react": "^19.0.0",
-    "react-dom": "^19.0.0"
-  },
-  "devDependencies": {
-    "@eslint/eslintrc": "^3",
-    "@types/node": "^20",
-    "@types/pg": "^8.11.11",
-    "@types/react": "^19",
-    "@types/react-dom": "^19",
-    "eslint": "^9",
-    "eslint-config-next": "15.1.6",
-    "eslint-config-prettier": "^10.0.1",
-    "next-themes": "^0.4.4",
-    "postcss": "^8",
-    "tailwindcss": "^3.4.1",
-    "typescript": "^5"
+    "@astrojs/image": "^0.17.2",
+    "@astrojs/mdx": "^0.19.7",
+    "@astrojs/sitemap": "^2.0.1",
+    "@astrojs/tailwind": "^4.0.0",
+    "@fontsource-variable/inter": "^5.0.5",
+    "@tailwindcss/typography": "^0.5.9",
+    "astro": "^2.10.15",
+    "astro-icon": "^0.8.1",
+    "astro-navbar": "^2.0.1",
+    "astro-seo": "^0.7.5",
+    "sharp": "^0.32.4",
+    "tailwindcss": "^3.0.24"
   }
 }

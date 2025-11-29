@@ -1,0 +1,149 @@
+---
+import Layout from "@layouts/Layout.astro";
+import Container from "@components/container.astro";
+import { Icon } from "astro-icon";
+
+const clients = [
+  { name: "Yelp", logo: "/logos/yelp_logo.png" },
+  { name: "Comfort & Peace", logo: "/logos/CPH_Logo_Color.png" },
+  { name: "Dirty Dough", logo: "/logos/dirty-dough-logo-mobile.svg" },         // Add your Dirty Dough logo file to public/logos/
+  { name: "Pretty Petals SD", logo: "/logos/pretty-petals-sd-logo.png" } // Add your Pretty Petals SD logo file to public/logos/
+];
+
+const portfolioVideos = [
+  { src: "https://www.youtube.com/embed/SaZ7Rjn9Y18", caption: "Yelp - Air and Space Halloween Event", vertical: true, type: "youtube" },
+  { src: "https://www.youtube.com/embed/OPnxxHnJIcE", caption: "Yelp - Rancho Guejito", vertical: true, type: "youtube" },
+  { src: "https://www.youtube.com/embed/S4ryQhjM-vg", caption: "Yelp - The Flower Fields Carlsbad", vertical: true, type: "youtube" },
+];
+---
+
+<Layout title="Home">
+  <Container>
+    <section class="min-h-[60vh] flex flex-col items-center justify-center bg-white text-gray-900 font-sans">
+      <h1 class="text-5xl md:text-6xl font-bold mb-8 text-center tracking-wide">
+        Locally Trusted, Professional Quality Wedding, Promo & Event Videography.
+      </h1>
+      <p class="text-xl md:text-2xl mb-10 text-center max-w-2xl text-gray-700 font-light">
+        Cinematic video for San Diego weddings and small businesses. Minimal, timeless, and always on budget.
+      </p>
+      <div class="flex flex-wrap gap-4 justify-center mb-8">
+        <a href="/contact" class="px-6 py-3 bg-black text-white rounded shadow hover:bg-gray-800 transition font-semibold">Tell Us About Your Vision</a>
+        <a href="/contact" class="px-6 py-3 bg-black text-white rounded shadow hover:bg-gray-800 transition font-semibold">Get a Quote</a>
+        <a href="/contact" class="px-6 py-3 bg-black text-white rounded shadow hover:bg-gray-800 transition font-semibold">Let’s Talk</a>
+      </div>
+    </section>
+
+    <section class="py-8 bg-white text-black">
+      <h2 class="text-2xl md:text-3xl font-light text-center mb-8">What We Offer</h2>
+      <div class="flex flex-col md:flex-row gap-8 items-stretch mt-8">
+        <div class="border border-black rounded p-10 flex flex-col items-center flex-1 bg-white">
+          <h3 class="font-light text-xl mb-2 text-black">Wedding Video Services</h3>
+          <p class="text-gray-700 mb-4 text-center">
+            Your wedding day deserves to be remembered forever. We specialize in cinematic wedding films that capture every emotion, detail, and moment. From intimate elopements to grand celebrations, our team crafts timeless videos you’ll cherish for a lifetime.
+          </p>
+          <a href="/contact" class="inline-block px-6 py-2 bg-black text-white rounded shadow hover:bg-gray-800 transition font-semibold mt-2">Get a Wedding Video Quote</a>
+        </div>
+      </div>
+      <div class="flex flex-col md:flex-row gap-8 items-stretch mt-16">
+        <div class="border border-black rounded p-10 flex flex-col items-center flex-1">
+          <h3 class="font-light text-xl mb-2">Business Promo Videos</h3>
+          <p class="text-gray-700 mb-4 text-center">Short form, Instagram-ready, always cinematic.</p>
+        </div>
+        <div class="border border-black rounded p-10 flex flex-col items-center flex-1">
+          <h3 class="font-light text-xl mb-2">Event Coverage & Recaps</h3>
+          <p class="text-gray-700 mb-4 text-center">Capture the moment, focus on the experience.</p>
+        </div>
+        <div class="border border-black rounded p-10 flex flex-col items-center flex-1">
+          <h3 class="font-light text-xl mb-2">Custom Video Solutions</h3>
+          <p class="text-gray-700 mb-4 text-center">Unique projects, simple process, timeless results.</p>
+        </div>
+      </div>
+
+      <div class="text-center mt-8 mb-8">
+        <a href="/service" class="inline-block px-6 py-2 bg-black text-white rounded shadow hover:bg-gray-800 transition font-semibold">Learn More</a>
+      </div>
+      <div class="py-8 bg-white text-black">
+        <h2 class="text-2xl md:text-3xl font-bold text-center mb-2 mt-0">Trusted By</h2>
+        <div class="flex flex-wrap justify-center items-center gap-8 mt-2">
+          {clients.map(client => (
+            <div class="h-16 w-36 flex items-center justify-center rounded shadow-sm">
+              <img 
+                src={client.logo} 
+                alt={client.name} 
+                class="h-12 w-32 object-contain opacity-90" 
+                style="max-width:8rem;" 
+              />
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <section class="py-12 bg-white text-black">
+      <h2 class="text-2xl md:text-3xl font-light text-center mb-8">Yelp San Diego's Preferred Videographer</h2>
+      <div class="grid md:grid-cols-3 gap-8">
+        {portfolioVideos.map(video => (
+          <div class="flex flex-col items-center">
+            {video.type === "youtube" ? (
+              <iframe
+                src={video.src}
+                class="w-full rounded mb-2"
+                style="max-width:320px;aspect-ratio:9/16;"
+                frameborder="0"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowfullscreen
+              ></iframe>
+            ) : (
+              <video 
+                src={video.src} 
+                controls 
+                class="w-full rounded mb-2" 
+                style="max-width:320px;aspect-ratio:9/16;"
+              ></video>
+            )}
+            <span class="text-black text-center">{video.caption}</span>
+          </div>
+        ))}
+      </div>
+      <div class="text-center mt-8">
+        <a href="/portfolio " class="inline-block px-6 py-2 border border-black rounded text-black hover:bg-black hover:text-white transition font-light">Visit Portfolio</a>
+      </div>
+    </section>
+  </Container>
+
+  <footer class="bg-white text-black py-16 mt-12">
+    <Container>
+      <div class="flex flex-col md:flex-row items-center justify-center gap-8 w-full max-w-4xl mx-auto">
+        <div class="w-full md:w-auto text-center md:text-left">
+          <span class="font-light">Service Area:</span> Proudly serving Poway, Greater San Diego, and beyond.
+        </div>
+        <nav class="flex gap-6 w-full md:w-auto justify-center">
+          <a href="/services" class="hover:underline">Services</a>
+          <a href="/about" class="hover:underline">About</a>
+          <a href="/portfolio" class="hover:underline">Portfolio</a>
+          <a href="/contact" class="hover:underline">Contact</a>
+        </nav>
+        <div class="flex gap-3 justify-center w-full md:w-auto">
+          <a href="https://instagram.com/heylproductions" aria-label="Instagram" target="_blank" rel="noopener">
+            <Icon name="mdi:instagram" class="w-6 h-6" />
+            <span class="sr-only">@heylproductions</span>
+          </a>
+          <a href="#" aria-label="Facebook"><Icon name="mdi:facebook" class="w-6 h-6" /></a>
+          <a href="https://youtube.com/@erickheyl8293" aria-label="YouTube" target="_blank" rel="noopener">
+            <Icon name="mdi:youtube" class="w-6 h-6" />
+            <span class="sr-only">@erickheyl8293</span>
+          </a>
+          <a 
+            href="mailto:erick@heylproductions.com,samantha@heylproductions.com" 
+            aria-label="Email Erick and Samantha" 
+            target="_blank" 
+            rel="noopener"
+          >
+            <Icon name="mdi:email" class="w-6 h-6" />
+            <span class="sr-only">Email Erick and Samantha</span>
+          </a>
+        </div>
+      </div>
+    </Container>
+  </footer>
+</Layout>
