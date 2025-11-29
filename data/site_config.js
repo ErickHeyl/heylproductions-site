@@ -1,7 +1,7 @@
 const site_config = {
-  title: "Next Wedding",
+  title: "Heyl Productions",
   author: "Tony",
-  header_title: "nextwedding",
+  header_title: "heylproductions",
   description: "A wedding website.",
   language: "en-us",
   theme: "light", // system, dark or light

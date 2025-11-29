@@ -6,7 +6,7 @@ import Header from "@/components/Header";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "NextWedding.dev",
+  title: "Heyl Productions",
   description: "Your Next Wedding Site is here.",
 };
 
