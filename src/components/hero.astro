@@ -1,8 +1,8 @@
 ---
-import { Picture } from "@astrojs/image/components";
+import { Picture } from "astro:assets";
 import landingImage from "assets/dean-landing-no-bg.png";
 import Link from "@components/ui/link.astro";
-import { Icon } from "astro-icon";
+import { Icon } from "astro-icon/components";
 ---
 
 <main
@@ -12,10 +12,10 @@ import { Icon } from "astro-icon";
       src={landingImage}
       alt="Astronaut in the air"
       widths={[200, 400, 600]}
-      aspectRatio="1:1"
-      sizes="(max-width: 800px) 100vw, 420px"
+      width={600}
+      height={600}
+      formats={['avif', 'webp']}
       loading="eager"
-      format="avif"
     />
   </div>
   <div>
