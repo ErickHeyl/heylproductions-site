@@ -1,6 +1,6 @@
 ---
 import { getCollection } from "astro:content";
-import { Picture } from "@astrojs/image/components";
+import { Picture } from "astro:assets";
 import Layout from "@layouts/Layout.astro";
 import Container from "@components/container.astro";
 import Sectionhead from "@components/sectionhead.astro";
@@ -41,35 +41,29 @@ const publishedTeamMembers = await getCollection("team", ({ data }) => {
         <Picture
           src="/assets/Erick+Sammie-Wedding.jpg"
           alt="Erick working"
-          sizes="(max-width: 800px) 100vw, 200px"
           widths={[150, 200]}
-          aspectRatio="1:1"
-          background="#ffffff"
-          fit="cover"
-          position="center"
-          class="rounded-md shadow"
+          width={200}
+          height={200}
+          formats={['avif', 'webp']}
+          class="rounded-md shadow object-cover"
         />
         <Picture
           src="/assets/Erick+Sammie-Yelp - Crop.JPG"
           alt="Sammie working"
-          sizes="(max-width: 800px) 100vw, 200px"
           widths={[150, 200]}
-          aspectRatio="1:1"
-          background="#ffffff"
-          fit="cover"
-          position="center"
-          class="rounded-md shadow"
+          width={200}
+          height={200}
+          formats={['avif', 'webp']}
+          class="rounded-md shadow object-cover"
         />
         <Picture
           src="/assets/Erick+Sammie-bridal.jpg"
           alt="Erick and Sammie together"
-          sizes="(max-width: 800px) 100vw, 200px"
           widths={[150, 200]}
-          aspectRatio="1:1"
-          background="#ffffff"
-          fit="cover"
-          position="center"
-          class="rounded-md shadow"
+          width={200}
+          height={200}
+          formats={['avif', 'webp']}
+          class="rounded-md shadow object-cover"
         />
       </div>
 
@@ -130,13 +124,11 @@ You’re seriously amazing! We are extremely grateful! ❤️❤️❤️ -- Dom
               <Picture
                 src={profileImage}
                 alt={teamMemberEntry.data.avatar.alt}
-                sizes="(max-width: 800px) 100vw, 400px"
                 widths={[200, 400]}
-                aspectRatio="1:1"
-                background="#ffffff"
-                fit="cover"
-                position="center"
-                class="w-full rounded-md rounded transition group-hover:-translate-y-1 group-hover:shadow-xl"
+                width={400}
+                height={400}
+                formats={['avif', 'webp']}
+                class="w-full rounded-md rounded transition group-hover:-translate-y-1 group-hover:shadow-xl object-cover"
               />
             </div>
             <div class="mt-4 text-center">
