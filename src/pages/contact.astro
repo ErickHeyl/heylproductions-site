@@ -16,7 +16,11 @@ import { Icon } from "astro-icon/components";
 
     <div class="grid md:grid-cols-2 gap-10 mx-auto max-w-5xl mt-16">
       <div>
-        <form class="space-y-5">
+        <form action="https://api.web3forms.com/submit" method="POST" class="space-y-5" id="contactForm">
+          <input type="hidden" name="access_key" value="d9ccabf0-fe2c-470a-9061-d9f9ad9f849f" />
+          <input type="hidden" name="redirect" value="https://heylproductions.vercel.app/contact?success=true" />
+          <input type="hidden" name="subject" value="New Contact Form Submission from Heyl Productions Website" />
+          <input type="checkbox" name="botcheck" class="hidden" style="display: none;" />
           <div>
             <label for="name" class="block text-gray-700 font-medium mb-1">Name</label>
             <input type="text" id="name" name="name" required class="w-full border rounded px-3 py-2" placeholder="John Doe" />
@@ -46,7 +50,7 @@ import { Icon } from "astro-icon/components";
             <textarea id="message" name="message" rows="4" class="w-full border rounded px-3 py-2" placeholder="Share any details or questions here..."></textarea>
           </div>
           <button type="submit" class="w-full bg-black text-white py-2 rounded hover:bg-gray-800 transition font-semibold">Submit</button>
-          <p class="text-green-700 text-center mt-2">Thanks for submitting! We’ll get back to you within 24 hours.</p>
+          <p id="successMessage" class="text-green-700 text-center mt-2 hidden">Thanks for submitting! We'll get back to you within 24 hours.</p>
         </form>
       </div>
       <div class="flex flex-col h-full">
@@ -111,3 +115,15 @@ import { Icon } from "astro-icon/components";
     </Container>
   </footer>
 </Layout>
+
+<script>
+  // Show success message if redirected with success parameter
+  if (window.location.search.includes('success=true')) {
+    const successMessage = document.getElementById('successMessage');
+    if (successMessage) {
+      successMessage.classList.remove('hidden');
+      // Scroll to the message
+      successMessage.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+  }
+</script>
