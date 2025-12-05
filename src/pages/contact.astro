@@ -18,8 +18,8 @@ import { Icon } from "astro-icon/components";
       <div>
         <form action="https://api.web3forms.com/submit" method="POST" class="space-y-5" id="contactForm">
           <input type="hidden" name="access_key" value="5aad919e-be61-4bf1-8e8b-76d4eafc5917" />
-          <input type="hidden" name="redirect" value="https://heylproductions.com/contact?success=true" />
           <input type="hidden" name="subject" value="New Contact Form Submission from Heyl Productions Website" />
+          <input type="hidden" name="from_name" value="Heyl Productions Contact Form" />
           <input type="checkbox" name="botcheck" class="hidden" style="display: none;" />
           <div>
             <label for="name" class="block text-gray-700 font-medium mb-1">Name</label>
@@ -117,13 +117,48 @@ import { Icon } from "astro-icon/components";
 </Layout>
 
 <script>
-  // Show success message if redirected with success parameter
-  if (window.location.search.includes('success=true')) {
-    const successMessage = document.getElementById('successMessage');
-    if (successMessage) {
-      successMessage.classList.remove('hidden');
-      // Scroll to the message
-      successMessage.scrollIntoView({ behavior: 'smooth', block: 'center' });
-    }
+  const form = document.getElementById('contactForm') as HTMLFormElement;
+  const successMessage = document.getElementById('successMessage');
+  
+  if (form) {
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      const formData = new FormData(form);
+      const button = form.querySelector('button[type="submit"]') as HTMLButtonElement;
+      const originalText = button.textContent;
+      
+      // Disable button and show loading state
+      button.disabled = true;
+      button.textContent = 'Sending...';
+      
+      try {
+        const response = await fetch('https://api.web3forms.com/submit', {
+          method: 'POST',
+          body: formData
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+          // Show success message
+          if (successMessage) {
+            successMessage.classList.remove('hidden');
+            successMessage.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          }
+          // Reset form
+          form.reset();
+        } else {
+          alert('Oops! Something went wrong. Please try again or email us directly at erick@heylproductions.com');
+        }
+      } catch (error) {
+        console.error('Error:', error);
+        alert('Oops! Something went wrong. Please try again or email us directly at erick@heylproductions.com');
+      } finally {
+        // Re-enable button
+        button.disabled = false;
+        button.textContent = originalText;
+      }
+    });
   }
 </script>
