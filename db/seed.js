@@ -12,12 +12,15 @@ import fs from "node:fs";
 import pg from "pg";
 import { STARTER_POSTS } from "../src/data/starter_posts.js";
 
-if (!process.env.POSTGRES_URL) {
-  console.error("POSTGRES_URL is not set. Add it to .env first (see .env.example).");
+const url = process.env.POSTGRES_URL || process.env.DATABASE_URL;
+if (!url) {
+  console.error("POSTGRES_URL (or DATABASE_URL) is not set. Add it to .env first (see .env.example).");
   process.exit(1);
 }
 
-const pool = new pg.Pool({ connectionString: process.env.POSTGRES_URL + "?sslmode=require" });
+// Neon URLs already include sslmode=require; only add it when missing.
+const connectionString = /[?&]sslmode=/.test(url) ? url : `${url}${url.includes("?") ? "&" : "?"}sslmode=require`;
+const pool = new pg.Pool({ connectionString });
 
 const slugify = (title) =>
   title.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");

@@ -1,4 +1,5 @@
-import pool from "./db";
+import { getPool } from "./db";
+import { databaseUrl } from "@lib/env";
 import { slugify } from "@lib/slugify";
 import {
   memory_get_all_posts,
@@ -46,11 +47,11 @@ export const excerpt = (body: string, maxLength = 180): string => {
 // No POSTGRES_URL configured: fall back to an in-memory store so the blog and
 // admin create/edit/delete flows work locally without a real database. See
 // memoryBlogStore.ts.
-const hasDb = () => !!import.meta.env.POSTGRES_URL;
+const hasDb = () => !!databaseUrl();
 
 export const get_all_posts = async (): Promise<BlogPost[]> => {
   if (!hasDb()) return memory_get_all_posts();
-  const results = await pool.query("SELECT * FROM blog_posts ORDER BY created_at DESC;");
+  const results = await getPool().query("SELECT * FROM blog_posts ORDER BY created_at DESC;");
   return results.rows;
 };
 
@@ -62,7 +63,7 @@ export const get_posts_by_category = async (
   limit = 3,
 ): Promise<BlogPost[]> => {
   if (!hasDb()) return memory_get_posts_by_category(category, limit);
-  const results = await pool.query(
+  const results = await getPool().query(
     "SELECT * FROM blog_posts WHERE category = $1 ORDER BY created_at DESC LIMIT $2;",
     [category, limit],
   );
@@ -71,7 +72,7 @@ export const get_posts_by_category = async (
 
 export const get_post_by_slug = async (slug: string): Promise<BlogPost | null> => {
   if (!hasDb()) return memory_get_post_by_slug(slug);
-  const results = await pool.query("SELECT * FROM blog_posts WHERE slug = $1;", [slug]);
+  const results = await getPool().query("SELECT * FROM blog_posts WHERE slug = $1;", [slug]);
   return results.rows[0] ?? null;
 };
 
@@ -82,7 +83,7 @@ const unique_slug_for = async (title: string): Promise<string> => {
   const base = slugify(title) || `post-${Date.now()}`;
   let slug = base;
   let suffix = 2;
-  while ((await pool.query("SELECT 1 FROM blog_posts WHERE slug = $1", [slug])).rows.length > 0) {
+  while ((await getPool().query("SELECT 1 FROM blog_posts WHERE slug = $1", [slug])).rows.length > 0) {
     slug = `${base}-${suffix}`;
     suffix++;
   }
@@ -100,7 +101,7 @@ export const create_post = async (
   const slug = await unique_slug_for(title);
   const date_label = new Date().toLocaleDateString("en-US", { month: "long", year: "numeric" });
 
-  const result = await pool.query(
+  const result = await getPool().query(
     `INSERT INTO blog_posts (title, slug, date_label, body, image_url, category)
      VALUES ($1, $2, $3, $4, $5, $6)
      RETURNING *;`,
@@ -120,7 +121,7 @@ export const update_post = async (
 ): Promise<BlogPost | null> => {
   if (!hasDb()) return memory_update_post(slug, title, body, image_url, category);
 
-  const result = await pool.query(
+  const result = await getPool().query(
     `UPDATE blog_posts
      SET title = $2, body = $3, image_url = $4, category = $5
      WHERE slug = $1
@@ -132,6 +133,6 @@ export const update_post = async (
 
 export const delete_post = async (slug: string): Promise<boolean> => {
   if (!hasDb()) return memory_delete_post(slug);
-  const result = await pool.query("DELETE FROM blog_posts WHERE slug = $1;", [slug]);
+  const result = await getPool().query("DELETE FROM blog_posts WHERE slug = $1;", [slug]);
   return (result.rowCount ?? 0) > 0;
 };

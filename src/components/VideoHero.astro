@@ -1,0 +1,80 @@
+---
+// Full-bleed video header that stays pinned while the page content slides up
+// over it (see the sheet wrapper in pages/index.astro). The video is lightly
+// tinted overall and darkened behind the nav and title so white text stays
+// readable over both bright and dark shots.
+import { HERO_VIDEO, HERO_POSTER } from "@data/hero";
+---
+
+<section
+  class="video-hero sticky top-0 z-0 h-[88vh] min-h-[600px] max-h-[960px] overflow-hidden bg-ink text-paper"
+  style={`background-image: url(${HERO_POSTER}); background-size: cover; background-position: center;`}>
+  <video
+    class="absolute inset-0 h-full w-full object-cover"
+    src={HERO_VIDEO}
+    poster={HERO_POSTER}
+    autoplay
+    muted
+    loop
+    playsinline
+    preload="auto"
+    aria-hidden="true"></video>
+
+  <div aria-hidden="true" class="absolute inset-0 bg-ink/20"></div>
+  <div aria-hidden="true" class="absolute inset-x-0 top-0 h-44 bg-gradient-to-b from-ink/60 to-transparent"></div>
+  <div aria-hidden="true" class="absolute inset-0 bg-[radial-gradient(ellipse_60%_48%_at_50%_52%,rgba(28,26,23,0.6),transparent)]"></div>
+
+  <div class="relative z-10 mx-auto flex h-full max-w-7xl flex-col items-center justify-center px-4 pb-16 text-center sm:px-8">
+    <p class="text-xs font-semibold uppercase tracking-[0.24em] text-pine-mist mb-6">Wedding · Promo · Event films — Poway &amp; San Diego</p>
+    <h1 class="max-w-5xl text-6xl md:text-7xl xl:text-8xl leading-[0.96] tracking-tight">
+      Films that feel like the day <span class="italic">actually felt.</span>
+    </h1>
+    <p class="text-lg md:text-xl leading-relaxed text-paper/90 max-w-xl mt-7 mb-9">
+      Cinematic video for San Diego couples and small businesses, from a husband-and-wife team filming the city we grew up in since 2019.
+    </p>
+    <div class="flex flex-wrap justify-center gap-3">
+      <a href="/contact" class="btn-light">Check your date</a>
+      <a href="/portfolio" class="btn border border-paper hover:bg-paper hover:text-ink">See our films</a>
+    </div>
+  </div>
+
+  <button
+    type="button"
+    class="video-toggle absolute bottom-16 right-4 z-10 flex h-11 w-11 items-center justify-center rounded-full border border-paper text-paper transition-colors hover:bg-paper hover:text-ink sm:right-8"
+    aria-label="Pause background video">
+    <svg class="icon-pause h-3.5 w-3.5" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="6" y="4" width="4" height="16"></rect><rect x="14" y="4" width="4" height="16"></rect></svg>
+    <svg class="icon-play hidden h-3.5 w-3.5" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7 4l14 8-14 8z"></path></svg>
+  </button>
+</section>
+
+<style>
+  /* Respect reduced-motion: show the still poster instead of the moving video. */
+  @media (prefers-reduced-motion: reduce) {
+    .video-hero video,
+    .video-hero .video-toggle {
+      display: none;
+    }
+  }
+</style>
+
+<script>
+  document.querySelectorAll<HTMLElement>(".video-hero").forEach((hero) => {
+    const video = hero.querySelector("video");
+    const button = hero.querySelector<HTMLButtonElement>(".video-toggle");
+    if (!video || !button) return;
+
+    const sync = () => {
+      button.setAttribute("aria-label", video.paused ? "Play background video" : "Pause background video");
+      button.querySelector(".icon-pause")?.classList.toggle("hidden", video.paused);
+      button.querySelector(".icon-play")?.classList.toggle("hidden", !video.paused);
+    };
+
+    button.addEventListener("click", () => {
+      if (video.paused) video.play().catch(() => {});
+      else video.pause();
+    });
+    video.addEventListener("play", sync);
+    video.addEventListener("pause", sync);
+    sync();
+  });
+</script>

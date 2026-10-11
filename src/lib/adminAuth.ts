@@ -1,5 +1,6 @@
 import { createHmac, timingSafeEqual } from "node:crypto";
 import type { AstroCookies } from "astro";
+import { adminPassword } from "./env";
 
 const COOKIE_NAME = "heyl_admin_session";
 const SESSION_DAYS = 7;
@@ -7,7 +8,7 @@ const SESSION_DAYS = 7;
 // One shared admin password both gates login and signs the session cookie:
 // no separate secret to manage, and changing the password logs out every
 // existing session.
-const secret = () => import.meta.env.BLOG_ADMIN_PASSWORD || "";
+const secret = () => adminPassword();
 
 const sign = (expiresAt: number): string =>
   createHmac("sha256", secret()).update(String(expiresAt)).digest("hex");

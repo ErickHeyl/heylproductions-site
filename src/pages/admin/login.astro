@@ -2,6 +2,7 @@
 import Layout from "@layouts/Layout.astro";
 import Container from "@components/container.astro";
 import { isAuthenticated } from "@lib/adminAuth";
+import { adminPassword } from "@lib/env";
 
 export const prerender = false;
 
@@ -9,7 +10,7 @@ if (isAuthenticated(Astro.cookies)) {
   return Astro.redirect("/admin");
 }
 
-const notConfigured = !import.meta.env.BLOG_ADMIN_PASSWORD;
+const notConfigured = !adminPassword();
 ---
 
 <Layout title="Admin Login" noindex>

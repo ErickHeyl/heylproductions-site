@@ -12,6 +12,8 @@ export interface Props {
   description?: string;
   image?: string;
   noindex?: boolean;
+  // Nav floats transparently over a full-bleed hero (the homepage video).
+  overlayNav?: boolean;
 }
 
 const {
@@ -19,6 +21,7 @@ const {
   description = "Cinematic wedding, promo and event videography for San Diego couples and small businesses.",
   image = "/opengraph.jpg",
   noindex = false,
+  overlayNav = false,
 } = Astro.props;
 
 const canonicalURL = new URL(Astro.url.pathname, Astro.site).toString();
@@ -50,7 +53,7 @@ const fullTitle = title === "Home" ? "Heyl Productions | San Diego Videography" 
     />
   </head>
   <body>
-    <Navbar />
+    <Navbar overlay={overlayNav} />
     <main>
       <slot />
     </main>
