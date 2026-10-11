@@ -1,0 +1,50 @@
+---
+import Layout from "@layouts/Layout.astro";
+import Container from "@components/container.astro";
+import { isAuthenticated } from "@lib/adminAuth";
+
+export const prerender = false;
+
+if (!isAuthenticated(Astro.cookies)) {
+  return Astro.redirect("/admin/login");
+}
+
+const usingSampleData = !import.meta.env.POSTGRES_URL;
+---
+
+<Layout title="Admin" noindex>
+  <Container>
+    <div class="py-20 max-w-2xl mx-auto">
+      <div class="flex items-center justify-between mb-12">
+        <h1 class="text-5xl">Welcome back</h1>
+        <button id="logoutButton" class="text-sm font-semibold uppercase tracking-[0.14em] text-muted hover:text-ink">Log out</button>
+      </div>
+
+      {
+        usingSampleData && (
+          <p class="mb-8 rounded-lg border border-line bg-white p-4 text-sm text-muted">
+            No database is connected, so the blog is showing sample posts and changes made here are lost when the server restarts. Set <code>POSTGRES_URL</code> to save posts for real.
+          </p>
+        )
+      }
+
+      <div class="grid gap-4">
+        <a href="/admin/blog/new" class="block bg-sand rounded-2xl p-8 hover:bg-stone transition">
+          <h2 class="text-3xl mb-2">Write a blog post</h2>
+          <p class="text-muted">Publish a new post to the blog.</p>
+        </a>
+        <a href="/admin/blog" class="block bg-sand rounded-2xl p-8 hover:bg-stone transition">
+          <h2 class="text-3xl mb-2">Manage posts</h2>
+          <p class="text-muted">Edit or delete an existing post.</p>
+        </a>
+      </div>
+    </div>
+  </Container>
+</Layout>
+
+<script>
+  document.getElementById("logoutButton")?.addEventListener("click", async () => {
+    await fetch("/api/admin/logout", { method: "POST" });
+    window.location.href = "/admin/login";
+  });
+</script>

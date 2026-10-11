@@ -1,0 +1,22 @@
+---
+export interface Props {
+  // YouTube video id, e.g. "SaZ7Rjn9Y18"
+  id: string;
+  title: string;
+  vertical?: boolean;
+  class?: string;
+}
+
+const { id, title, vertical = false, class: className } = Astro.props;
+---
+
+<figure class:list={["m-0", className]}>
+  <iframe
+    src={`https://www.youtube-nocookie.com/embed/${id}`}
+    title={title}
+    loading="lazy"
+    class:list={["w-full rounded-xl bg-stone", vertical ? "aspect-[9/16]" : "aspect-video"]}
+    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+    allowfullscreen></iframe>
+  <figcaption class="mt-4 font-serif text-2xl text-center">{title}</figcaption>
+</figure>

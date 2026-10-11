@@ -1,0 +1,93 @@
+---
+import Layout from "@layouts/Layout.astro";
+import Container from "@components/container.astro";
+import BlogPostForm from "@components/BlogPostForm.astro";
+import { isAuthenticated } from "@lib/adminAuth";
+import { get_post_by_slug } from "@models/blog_posts";
+
+export const prerender = false;
+
+if (!isAuthenticated(Astro.cookies)) {
+  return Astro.redirect("/admin/login");
+}
+
+const { slug } = Astro.params;
+const post = slug ? await get_post_by_slug(slug) : null;
+
+if (!post) {
+  return Astro.redirect("/admin/blog");
+}
+---
+
+<Layout title="Edit Blog Post" noindex>
+  <Container>
+    <div class="py-20 max-w-2xl mx-auto">
+      <div class="flex items-start justify-between gap-4 mb-12">
+        <div>
+          <h1 class="text-5xl mb-3">Edit post</h1>
+          <p class="text-muted">Changes appear on <a href={`/blog/${post.slug}`} class="text-link">the post</a> right away.</p>
+        </div>
+        <a href="/admin/blog" class="text-sm font-semibold uppercase tracking-[0.14em] text-muted hover:text-ink whitespace-nowrap mt-3">&larr; All posts</a>
+      </div>
+
+      <BlogPostForm
+        slug={post.slug}
+        title={post.title}
+        category={post.category}
+        body={post.body}
+        imageUrl={post.image_url}
+        submitUrl="/api/blog/update"
+        submitLabel="Save changes"
+      />
+
+      <div class="mt-10 border-t border-line pt-8">
+        <h2 class="text-xs font-semibold uppercase tracking-[0.16em] text-muted mb-3">Danger zone</h2>
+        <button id="deleteButton" data-slug={post.slug} class="text-sm font-semibold text-red-700 hover:text-red-900 underline">Delete this post</button>
+        <p id="deleteError" role="alert" class="text-sm text-red-700 mt-2 hidden"></p>
+      </div>
+    </div>
+  </Container>
+</Layout>
+
+<script>
+  const deleteButton = document.getElementById("deleteButton") as HTMLButtonElement | null;
+  const deleteError = document.getElementById("deleteError");
+
+  const showError = (message: string) => {
+    if (!deleteError) return;
+    deleteError.textContent = message;
+    deleteError.classList.remove("hidden");
+  };
+
+  deleteButton?.addEventListener("click", async () => {
+    const slug = deleteButton.dataset.slug;
+    if (!slug) return;
+    if (!confirm("Delete this post for good? This can't be undone.")) return;
+
+    deleteButton.disabled = true;
+    deleteError?.classList.add("hidden");
+
+    try {
+      const formData = new FormData();
+      formData.set("slug", slug);
+      const response = await fetch("/api/blog/delete", { method: "POST", body: formData });
+
+      if (response.status === 401) {
+        window.location.href = "/admin/login";
+        return;
+      }
+
+      const data = await response.json();
+      if (data.success) {
+        window.location.href = "/admin/blog";
+      } else {
+        showError(data.error || "Something went wrong. Please try again.");
+        deleteButton.disabled = false;
+      }
+    } catch (error) {
+      console.error("Error deleting post:", error);
+      showError("Something went wrong. Please try again.");
+      deleteButton.disabled = false;
+    }
+  });
+</script>

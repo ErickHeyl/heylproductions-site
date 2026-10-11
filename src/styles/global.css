@@ -1,0 +1,44 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-paper text-ink font-sans antialiased;
+  }
+  h1, h2, h3 {
+    @apply font-serif font-normal;
+  }
+  /* Improve page speed: https://css-tricks.com/almanac/properties/c/content-visibility/ */
+  img {
+    content-visibility: auto;
+  }
+}
+
+@layer components {
+  /* Small spaced-out label above a heading */
+  .eyebrow {
+    @apply text-xs font-semibold uppercase tracking-[0.24em] text-pine;
+  }
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 rounded-full px-8 py-4 font-semibold transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-pine;
+  }
+  .btn-primary {
+    @apply btn bg-pine text-paper hover:bg-pine-dark;
+  }
+  .btn-outline {
+    @apply btn border border-ink hover:bg-ink hover:text-paper;
+  }
+  .btn-light {
+    @apply btn bg-paper text-ink hover:bg-sand;
+  }
+  .text-link {
+    @apply font-semibold underline underline-offset-[6px] decoration-1 hover:text-pine;
+  }
+  .field-label {
+    @apply mb-2 block text-xs font-semibold uppercase tracking-[0.16em] text-muted;
+  }
+  .field {
+    @apply w-full rounded-lg border border-line bg-white px-4 py-3 text-ink transition focus:border-pine focus:outline-none focus:ring-1 focus:ring-pine;
+  }
+}

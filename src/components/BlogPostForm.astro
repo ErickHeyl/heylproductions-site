@@ -1,0 +1,145 @@
+---
+import { BLOG_CATEGORIES, CATEGORY_LABEL } from "@models/blog_posts";
+
+export interface Props {
+  slug?: string;
+  title?: string;
+  category?: string;
+  body?: string;
+  imageUrl?: string | null;
+  submitUrl: string;
+  submitLabel: string;
+}
+
+const { slug, title = "", category = "general", body = "", imageUrl = null, submitUrl, submitLabel } = Astro.props;
+---
+
+<form id="postForm" data-submit-url={submitUrl} class="bg-sand rounded-2xl p-8 flex flex-col gap-6" enctype="multipart/form-data">
+  {slug && <input type="hidden" name="slug" value={slug} />}
+  <div>
+    <label for="title" class="field-label">Title</label>
+    <input type="text" id="title" name="title" required maxlength="200" value={title} class="field" />
+  </div>
+  <div>
+    <label for="category" class="field-label">Category</label>
+    <p class="text-sm text-muted mb-2">Weddings, Business and Events posts also appear on that section of the Services page.</p>
+    <select id="category" name="category" class="field">
+      {BLOG_CATEGORIES.map((c) => <option value={c} selected={category === c}>{CATEGORY_LABEL[c]}</option>)}
+    </select>
+  </div>
+  <div>
+    <label for="image" class="field-label">Photo (optional)</label>
+    <p class="text-sm text-muted mb-2">JPG or PNG, under 4MB. Very large camera files may need resizing first.</p>
+    {
+      imageUrl && (
+        <div class="flex items-center gap-3 mb-3">
+          <img src={imageUrl} alt="Current photo" class="w-16 h-16 object-cover rounded-lg border border-line" />
+          <label class="flex items-center gap-2 text-sm text-muted">
+            <input type="checkbox" id="removeImage" name="removeImage" value="true" />
+            Remove current photo
+          </label>
+        </div>
+      )
+    }
+    <input type="file" id="image" name="image" accept="image/*" class="w-full text-sm" />
+    <button type="button" id="clearImage" class="hidden text-sm text-muted hover:text-red-700 underline mt-2">Remove selected photo</button>
+    <p id="imageError" class="text-sm text-red-700 mt-2 hidden"></p>
+  </div>
+  <div>
+    <label for="body" class="field-label">Post text</label>
+    <p class="text-sm text-muted mb-2">Leave a blank line between paragraphs to start a new one.</p>
+    <textarea id="body" name="body" rows="14" required maxlength="50000" class="field">{body}</textarea>
+  </div>
+  <button type="submit" class="btn-primary w-full">{submitLabel}</button>
+  <p id="successMessage" role="status" class="text-pine text-center hidden">Saved! <a id="viewLink" href="/blog" class="underline">View the post</a>.</p>
+  <p id="errorMessage" role="alert" class="text-red-700 text-center hidden"></p>
+</form>
+
+<script>
+  const MAX_IMAGE_BYTES = 4 * 1024 * 1024;
+
+  const form = document.getElementById("postForm") as HTMLFormElement;
+  const successMessage = document.getElementById("successMessage");
+  const viewLink = document.getElementById("viewLink") as HTMLAnchorElement | null;
+  const errorMessage = document.getElementById("errorMessage");
+  const imageInput = document.getElementById("image") as HTMLInputElement;
+  const imageError = document.getElementById("imageError");
+  const clearImageButton = document.getElementById("clearImage");
+  const isEdit = !!form?.querySelector('input[name="slug"]');
+
+  // Checked when a photo is picked (so a mistake is obvious right away) and
+  // again on submit.
+  const validateImage = (): boolean => {
+    const file = imageInput?.files?.[0];
+    clearImageButton?.classList.toggle("hidden", !file);
+    if (!imageError) return true;
+    imageError.classList.add("hidden");
+    if (!file) return true;
+
+    if (!file.type.startsWith("image/")) {
+      imageError.textContent = "That doesn't look like a photo. Please choose an image file (JPG, PNG, etc.).";
+      imageError.classList.remove("hidden");
+      return false;
+    }
+    if (file.size > MAX_IMAGE_BYTES) {
+      imageError.textContent = `That photo is ${(file.size / 1024 / 1024).toFixed(1)}MB. Please use one under ${MAX_IMAGE_BYTES / 1024 / 1024}MB.`;
+      imageError.classList.remove("hidden");
+      return false;
+    }
+    return true;
+  };
+
+  imageInput?.addEventListener("change", validateImage);
+
+  clearImageButton?.addEventListener("click", () => {
+    if (imageInput) imageInput.value = "";
+    imageError?.classList.add("hidden");
+    clearImageButton.classList.add("hidden");
+  });
+
+  form?.addEventListener("submit", async (e) => {
+    e.preventDefault();
+
+    if (!validateImage()) {
+      imageError?.scrollIntoView({ behavior: "smooth", block: "center" });
+      return;
+    }
+
+    const button = form.querySelector('button[type="submit"]') as HTMLButtonElement;
+    const originalText = button.textContent;
+    button.disabled = true;
+    button.textContent = isEdit ? "Saving..." : "Publishing...";
+    successMessage?.classList.add("hidden");
+    errorMessage?.classList.add("hidden");
+
+    try {
+      const response = await fetch(form.dataset.submitUrl!, { method: "POST", body: new FormData(form) });
+
+      if (response.status === 401) {
+        window.location.href = "/admin/login";
+        return;
+      }
+
+      const data = await response.json();
+
+      if (data.success) {
+        if (viewLink && data.post?.slug) viewLink.href = `/blog/${data.post.slug}`;
+        successMessage?.classList.remove("hidden");
+        successMessage?.scrollIntoView({ behavior: "smooth", block: "center" });
+        if (!isEdit) form.reset();
+      } else if (errorMessage) {
+        errorMessage.textContent = data.error || "Something went wrong. Please try again.";
+        errorMessage.classList.remove("hidden");
+      }
+    } catch (error) {
+      console.error("Error:", error);
+      if (errorMessage) {
+        errorMessage.textContent = "Something went wrong. Please try again.";
+        errorMessage.classList.remove("hidden");
+      }
+    } finally {
+      button.disabled = false;
+      button.textContent = originalText;
+    }
+  });
+</script>

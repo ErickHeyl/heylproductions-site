@@ -1,68 +1,54 @@
-This is a Wedding Website Template
+# Heyl Productions
 
-## Demos
-Official Base: [https://heylproductions.vercel.app/](https://heylproductions.vercel.app/)
+Website for Heyl Productions, San Diego wedding, promo and event videography.
+Built with Astro 5 + Tailwind, deployed on Vercel.
 
-## Getting Started
+Live: [https://heylproductions.vercel.app/](https://heylproductions.vercel.app/)
 
-First, run the development server:
+## Getting started
+
+Requires Node 22 (see `.nvmrc`).
 
 ```bash
+npm install
+cp .env.example .env   # then fill in the values (see below)
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
+## Blog
 
-##  Customize Your Wedding Website
+Posts live in Postgres and are managed from a password-protected admin area,
+so new posts go live without touching code or redeploying.
 
-To make this site truly yours, update the configuration file with your wedding details.
+- Public pages: `/blog` (all posts, filterable by category) and `/blog/<slug>`
+- Admin: `/admin` (log in with `BLOG_ADMIN_PASSWORD`) to write, edit and delete posts
+- Categories: Weddings, Business, Events, General. Weddings/Business/Events
+  posts also appear on that section of `/service`, and the three newest posts
+  appear on the homepage.
 
-Head over to:
+### Setup
 
-```sh
-/data/site_config.js
+Set these in `.env` locally and in Vercel (Project Settings → Environment Variables):
+
+| Variable | What it's for |
+| --- | --- |
+| `POSTGRES_URL` | Neon Postgres connection string (Vercel → Storage → Neon) |
+| `BLOG_ADMIN_PASSWORD` | Password for `/admin` |
+| `BLOB_READ_WRITE_TOKEN` | Vercel Blob token for post photos (Vercel → Storage → Blob) |
+
+After `POSTGRES_URL` is set, create the table and load the sample posts once:
+
+```bash
+npm run db:seed
 ```
 
-## Example Update:
+Without `POSTGRES_URL` the site falls back to the built-in sample posts and any
+admin changes are kept in memory only (lost on restart). Without
+`BLOB_READ_WRITE_TOKEN`, photos are saved to `public/uploads/` (local dev only).
 
-```js
-export const site_config = {
-  groom: "Bob",
-  bride: "Alice",
-  weddingDate: "2025-06-15",
-  venue: "Sunset Beach Resort, Hawaii",
-  rsvpDeadline: "2025-05-01",
-};
-```
+## Design
 
-## Setup Postgres server
-
-(Optional) Go to [vercel's serverless postgres](https://vercel.com/marketplace/neon) and deploy a vercel serverless postgresql db through 'Neon'.
-
-
-Here is the create statement for the guests table. It is the only table required. 
-```sql
-create table public.guests
-(
-    guest_id     serial
-        primary key,
-    first_name   varchar(255) not null,
-    last_name    varchar(255) not null,
-    rsvp_status  varchar(255) default 'Pending'::character varying,
-    notes        text,
-    active       boolean      default true,
-    party_number integer,
-    host         char
-);
-
-```
-When adding a guest, the `host` parameter takes in a `'g'` or a `'b'` for the bride/groom. This only affects what will display on the admin view of the table.
-
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
-
-TBD
+"Editorial Arch": Instrument Serif headings, Hanken Grotesk body, paper/sand
+backgrounds with a deep pine accent. Colors and fonts are defined in
+`tailwind.config.cjs`; shared button/label/field styles are in
+`src/styles/global.css`.

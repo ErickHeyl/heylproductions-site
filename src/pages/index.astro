@@ -1,149 +1,169 @@
 ---
+import { Image } from "astro:assets";
 import Layout from "@layouts/Layout.astro";
 import Container from "@components/container.astro";
-import { Icon } from "astro-icon/components";
+import ServiceCards from "@components/ServiceCards.astro";
+import VideoEmbed from "@components/VideoEmbed.astro";
+import BlogCard from "@components/BlogCard.astro";
+import { get_recent_posts, type BlogPost } from "@models/blog_posts";
+import yelpEvent from "@assets/photos/yelp-event.jpg";
+import erickSammie from "@assets/photos/erick-sammie.jpg";
+import onSet from "@assets/photos/on-set.jpg";
 
-const clients = [
-  { name: "Yelp", logo: "/logos/yelp_logo.png" },
-  { name: "Comfort & Peace", logo: "/logos/CPH_Logo_Color.png" },
-  { name: "Dirty Dough", logo: "/logos/dirty-dough-logo-mobile.svg" },         // Add your Dirty Dough logo file to public/logos/
-  { name: "Pretty Petals SD", logo: "/logos/pretty-petals-sd-logo.png" } // Add your Pretty Petals SD logo file to public/logos/
+// Rendered per request so new blog posts show up without a redeploy.
+export const prerender = false;
+
+const clients = ["Yelp", "Comfort & Peace", "Dirty Dough", "Pretty Petals SD", "Hop Stop"];
+
+const reels = [
+  { id: "SaZ7Rjn9Y18", title: "Air & Space Halloween" },
+  { id: "OPnxxHnJIcE", title: "Rancho Guejito" },
+  { id: "S4ryQhjM-vg", title: "The Flower Fields, Carlsbad" },
 ];
 
-const portfolioVideos = [
-  { src: "https://www.youtube.com/embed/SaZ7Rjn9Y18", caption: "Yelp - Air and Space Halloween Event", vertical: true, type: "youtube" },
-  { src: "https://www.youtube.com/embed/OPnxxHnJIcE", caption: "Yelp - Rancho Guejito", vertical: true, type: "youtube" },
-  { src: "https://www.youtube.com/embed/S4ryQhjM-vg", caption: "Yelp - The Flower Fields Carlsbad", vertical: true, type: "youtube" },
-];
+let posts: BlogPost[] = [];
+try {
+  posts = await get_recent_posts(3);
+} catch (err) {
+  console.error("Failed to load recent blog posts for the homepage:", err);
+}
 ---
 
 <Layout title="Home">
+  <!-- Hero -->
   <Container>
-    <section class="min-h-[60vh] flex flex-col items-center justify-center bg-white text-gray-900 font-sans">
-      <h1 class="text-5xl md:text-6xl font-bold mb-8 text-center tracking-wide">
-        Locally Trusted, Professional Quality Wedding, Promo & Event Videography.
-      </h1>
-      <p class="text-xl md:text-2xl mb-10 text-center max-w-2xl text-gray-700 font-light">
-        Cinematic video for San Diego weddings and small businesses. Minimal, timeless, and always on budget.
-      </p>
-      <div class="flex flex-wrap gap-4 justify-center mb-8">
-        <a href="/contact" class="px-6 py-3 bg-black text-white rounded shadow hover:bg-gray-800 transition font-semibold">Tell Us About Your Vision</a>
-        <a href="/contact" class="px-6 py-3 bg-black text-white rounded shadow hover:bg-gray-800 transition font-semibold">Get a Quote</a>
-        <a href="/contact" class="px-6 py-3 bg-black text-white rounded shadow hover:bg-gray-800 transition font-semibold">Let’s Talk</a>
-      </div>
-    </section>
-
-    <section class="py-8 bg-white text-black">
-      <h2 class="text-2xl md:text-3xl font-light text-center mb-8">What We Offer</h2>
-      <div class="flex flex-col md:flex-row gap-8 items-stretch mt-8">
-        <div class="border border-black rounded p-10 flex flex-col items-center flex-1 bg-white">
-          <h3 class="font-light text-xl mb-2 text-black">Wedding Video Services</h3>
-          <p class="text-gray-700 mb-4 text-center">
-            Your wedding day deserves to be remembered forever. We specialize in cinematic wedding films that capture every emotion, detail, and moment. From intimate elopements to grand celebrations, our team crafts timeless videos you’ll cherish for a lifetime.
-          </p>
-          <a href="/contact" class="inline-block px-6 py-2 bg-black text-white rounded shadow hover:bg-gray-800 transition font-semibold mt-2">Get a Wedding Video Quote</a>
+    <section class="flex flex-col lg:flex-row items-center gap-16 pt-10 pb-28">
+      <div class="flex-1">
+        <p class="eyebrow mb-7">Wedding · Promo · Event films — San Diego</p>
+        <h1 class="text-6xl md:text-7xl xl:text-8xl leading-[0.98] tracking-tight">
+          Films that feel like the day <span class="italic text-pine">actually felt.</span>
+        </h1>
+        <p class="text-lg md:text-xl leading-relaxed text-muted max-w-xl mt-8 mb-10">
+          Cinematic video for San Diego couples and small businesses, from Erick and Sammie Heyl, a husband-and-wife team filming the city we grew up in since 2019.
+        </p>
+        <div class="flex flex-wrap gap-3">
+          <a href="/contact" class="btn-primary">Check your date</a>
+          <a href="/portfolio" class="btn-outline">See our films</a>
         </div>
       </div>
-      <div class="flex flex-col md:flex-row gap-8 items-stretch mt-16">
-        <div class="border border-black rounded p-10 flex flex-col items-center flex-1">
-          <h3 class="font-light text-xl mb-2">Business Promo Videos</h3>
-          <p class="text-gray-700 mb-4 text-center">Short form, Instagram-ready, always cinematic.</p>
-        </div>
-        <div class="border border-black rounded p-10 flex flex-col items-center flex-1">
-          <h3 class="font-light text-xl mb-2">Event Coverage & Recaps</h3>
-          <p class="text-gray-700 mb-4 text-center">Capture the moment, focus on the experience.</p>
-        </div>
-        <div class="border border-black rounded p-10 flex flex-col items-center flex-1">
-          <h3 class="font-light text-xl mb-2">Custom Video Solutions</h3>
-          <p class="text-gray-700 mb-4 text-center">Unique projects, simple process, timeless results.</p>
-        </div>
-      </div>
-
-      <div class="text-center mt-8 mb-8">
-        <a href="/service" class="inline-block px-6 py-2 bg-black text-white rounded shadow hover:bg-gray-800 transition font-semibold">Learn More</a>
-      </div>
-      <div class="py-8 bg-white text-black">
-        <h2 class="text-2xl md:text-3xl font-bold text-center mb-2 mt-0">Trusted By</h2>
-        <div class="flex flex-wrap justify-center items-center gap-8 mt-2">
-          {clients.map(client => (
-            <div class="h-16 w-36 flex items-center justify-center rounded shadow-sm">
-              <img 
-                src={client.logo} 
-                alt={client.name} 
-                class="h-12 w-32 object-contain opacity-90" 
-                style="max-width:8rem;" 
-              />
-            </div>
-          ))}
-        </div>
-      </div>
-    </section>
-
-    <section class="py-12 bg-white text-black">
-      <h2 class="text-2xl md:text-3xl font-light text-center mb-8">Yelp San Diego's Preferred Videographer</h2>
-      <div class="grid md:grid-cols-3 gap-8">
-        {portfolioVideos.map(video => (
-          <div class="flex flex-col items-center">
-            {video.type === "youtube" ? (
-              <iframe
-                src={video.src}
-                class="w-full rounded mb-2"
-                style="max-width:320px;aspect-ratio:9/16;"
-                frameborder="0"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                allowfullscreen
-              ></iframe>
-            ) : (
-              <video 
-                src={video.src} 
-                controls 
-                class="w-full rounded mb-2" 
-                style="max-width:320px;aspect-ratio:9/16;"
-              ></video>
-            )}
-            <span class="text-black text-center">{video.caption}</span>
-          </div>
-        ))}
-      </div>
-      <div class="text-center mt-8">
-        <a href="/portfolio " class="inline-block px-6 py-2 border border-black rounded text-black hover:bg-black hover:text-white transition font-light">Visit Portfolio</a>
+      <div class="flex-1 flex justify-center w-full">
+        <Image
+          src={yelpEvent}
+          alt="Erick and Sammie on set at a Yelp event"
+          widths={[400, 567]}
+          sizes="(min-width: 1024px) 400px, 75vw"
+          loading="eager"
+          class="w-3/4 max-w-md aspect-[3/4.8] object-cover object-top rounded-xl"
+        />
       </div>
     </section>
   </Container>
 
-  <footer class="bg-white text-black py-16 mt-12">
+  <!-- Trusted by -->
+  <section class="border-y border-line">
     <Container>
-      <div class="flex flex-col md:flex-row items-center justify-center gap-8 w-full max-w-4xl mx-auto">
-        <div class="w-full md:w-auto text-center md:text-left">
-          <span class="font-light">Service Area:</span> Proudly serving Poway, Greater San Diego, and beyond.
+      <p class="flex flex-wrap justify-center gap-x-11 gap-y-3 py-6 text-[13px] font-semibold uppercase tracking-[0.16em] text-muted">
+        <span class="text-pine">Trusted by</span>
+        {clients.map((client) => <span>{client}</span>)}
+      </p>
+    </Container>
+  </section>
+
+  <!-- Services -->
+  <Container>
+    <section class="py-28">
+      <div class="text-center max-w-2xl mx-auto mb-16">
+        <p class="eyebrow mb-4">What we offer</p>
+        <h2 class="text-5xl md:text-6xl leading-none mb-5">Four ways to tell your <span class="italic">story</span></h2>
+        <p class="text-lg leading-relaxed text-muted">
+          Professional video, lighting and sound, a fair and transparent quote before any work begins, and delivery in about two weeks.
+        </p>
+      </div>
+      <ServiceCards />
+    </section>
+  </Container>
+
+  <!-- About + testimonial -->
+  <section class="bg-sand">
+    <Container>
+      <div class="flex flex-col lg:flex-row items-center gap-16 py-28">
+        <div class="flex-1 grid grid-cols-2 gap-5 items-end w-full">
+          <Image
+            src={erickSammie}
+            alt="Erick and Sammie Heyl"
+            widths={[320, 640]}
+            sizes="(min-width: 1024px) 300px, 45vw"
+            class="w-full aspect-[3/4.2] object-cover object-[62%_40%] rounded-xl"
+          />
+          <Image
+            src={onSet}
+            alt="Erick filming a dessert table while Sammie holds a light"
+            widths={[320, 640]}
+            sizes="(min-width: 1024px) 300px, 45vw"
+            class="w-full aspect-[3/3.4] object-cover rounded-xl"
+          />
         </div>
-        <nav class="flex gap-6 w-full md:w-auto justify-center">
-          <a href="/services" class="hover:underline">Services</a>
-          <a href="/about" class="hover:underline">About</a>
-          <a href="/portfolio" class="hover:underline">Portfolio</a>
-          <a href="/contact" class="hover:underline">Contact</a>
-        </nav>
-        <div class="flex gap-3 justify-center w-full md:w-auto">
-          <a href="https://instagram.com/heylproductions" aria-label="Instagram" target="_blank" rel="noopener">
-            <Icon name="mdi:instagram" class="w-6 h-6" />
-            <span class="sr-only">@heylproductions</span>
-          </a>
-          <a href="#" aria-label="Facebook"><Icon name="mdi:facebook" class="w-6 h-6" /></a>
-          <a href="https://youtube.com/@erickheyl8293" aria-label="YouTube" target="_blank" rel="noopener">
-            <Icon name="mdi:youtube" class="w-6 h-6" />
-            <span class="sr-only">@erickheyl8293</span>
-          </a>
-          <a 
-            href="mailto:erick@heylproductions.com,samantha@heylproductions.com" 
-            aria-label="Email Erick and Samantha" 
-            target="_blank" 
-            rel="noopener"
-          >
-            <Icon name="mdi:email" class="w-6 h-6" />
-            <span class="sr-only">Email Erick and Samantha</span>
-          </a>
+        <div class="flex-1">
+          <blockquote class="font-serif text-4xl md:text-5xl leading-tight">
+            “That's the most beautiful video I've ever seen in my life. <span class="italic text-pine">I'm crying like a baby.</span>”
+          </blockquote>
+          <p class="text-xs font-semibold uppercase tracking-[0.24em] text-muted mt-6 mb-10">Dom &amp; Nicole · Wedding</p>
+          <p class="text-lg leading-relaxed text-muted mb-6">
+            We're a small team with a personal touch. We'll get to know you, show up early, stay out of the way, and make sure you enjoy the process as much as we do.
+          </p>
+          <a href="/about" class="text-link">Meet Erick &amp; Sammie</a>
         </div>
       </div>
     </Container>
-  </footer>
+  </section>
+
+  <!-- Reels -->
+  <Container>
+    <section class="py-28">
+      <div class="text-center mb-14">
+        <p class="eyebrow mb-4">Selected work</p>
+        <h2 class="text-5xl md:text-6xl leading-none">Yelp San Diego's <span class="italic">preferred</span> videographer</h2>
+      </div>
+      <div class="grid gap-8 md:grid-cols-3 max-w-5xl mx-auto">
+        {reels.map((reel) => <VideoEmbed id={reel.id} title={reel.title} vertical />)}
+      </div>
+      <div class="text-center mt-12">
+        <a href="/portfolio" class="btn-outline">Full portfolio</a>
+      </div>
+    </section>
+  </Container>
+
+  <!-- Blog -->
+  {
+    posts.length > 0 && (
+      <section class="border-t border-line">
+        <Container>
+          <div class="py-28">
+            <div class="flex flex-wrap justify-between items-end gap-6 mb-12">
+              <h2 class="text-5xl md:text-6xl leading-none">
+                The <span class="italic">Journal</span>
+              </h2>
+              <a href="/blog" class="text-link">Read the blog</a>
+            </div>
+            <div class="grid gap-8 md:grid-cols-3">
+              {posts.map((post) => <BlogCard post={post} />)}
+            </div>
+          </div>
+        </Container>
+      </section>
+    )
+  }
+
+  <!-- CTA -->
+  <section class="bg-pine text-paper">
+    <Container>
+      <div class="max-w-3xl mx-auto py-28 text-center">
+        <h2 class="text-5xl md:text-7xl leading-none mb-6">Tell us about <span class="italic">your</span> vision.</h2>
+        <p class="text-lg leading-relaxed text-pine-mist max-w-xl mx-auto mb-10">
+          A short call, a fair and transparent quote, and a film you'll keep for years.
+        </p>
+        <a href="/contact" class="btn-light">Start your inquiry</a>
+      </div>
+    </Container>
+  </section>
 </Layout>

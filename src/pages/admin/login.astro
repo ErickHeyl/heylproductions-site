@@ -1,0 +1,82 @@
+---
+import Layout from "@layouts/Layout.astro";
+import Container from "@components/container.astro";
+import { isAuthenticated } from "@lib/adminAuth";
+
+export const prerender = false;
+
+if (isAuthenticated(Astro.cookies)) {
+  return Astro.redirect("/admin");
+}
+
+const notConfigured = !import.meta.env.BLOG_ADMIN_PASSWORD;
+---
+
+<Layout title="Admin Login" noindex>
+  <Container>
+    <div class="py-24 max-w-md mx-auto">
+      <div class="text-center mb-10">
+        <h1 class="text-5xl mb-4">Admin login</h1>
+        <p class="text-muted">Sign in to manage the blog.</p>
+      </div>
+
+      {
+        notConfigured && (
+          <p class="mb-6 rounded-lg border border-line bg-white p-4 text-sm text-muted">
+            No admin password is set yet. Add <code>BLOG_ADMIN_PASSWORD</code> to <code>.env</code> (or Vercel's environment variables) to enable login.
+          </p>
+        )
+      }
+
+      <form id="loginForm" class="bg-sand rounded-2xl p-8 flex flex-col gap-5">
+        <div>
+          <label for="password" class="field-label">Password</label>
+          <input type="password" id="password" required autofocus autocomplete="current-password" class="field" />
+        </div>
+        <button type="submit" class="btn-primary w-full">Log in</button>
+        <p id="loginError" role="alert" class="text-red-700 text-center hidden"></p>
+      </form>
+    </div>
+  </Container>
+</Layout>
+
+<script>
+  const form = document.getElementById("loginForm") as HTMLFormElement;
+  const passwordInput = document.getElementById("password") as HTMLInputElement;
+  const loginError = document.getElementById("loginError");
+
+  form?.addEventListener("submit", async (e) => {
+    e.preventDefault();
+
+    const button = form.querySelector('button[type="submit"]') as HTMLButtonElement;
+    const originalText = button.textContent;
+    button.disabled = true;
+    button.textContent = "Logging in...";
+    loginError?.classList.add("hidden");
+
+    try {
+      const res = await fetch("/api/admin/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ password: passwordInput.value }),
+      });
+      const data = await res.json();
+
+      if (data.success) {
+        window.location.href = "/admin";
+      } else if (loginError) {
+        loginError.textContent = data.error || "Incorrect password.";
+        loginError.classList.remove("hidden");
+      }
+    } catch (error) {
+      console.error("Error:", error);
+      if (loginError) {
+        loginError.textContent = "Something went wrong. Please try again.";
+        loginError.classList.remove("hidden");
+      }
+    } finally {
+      button.disabled = false;
+      button.textContent = originalText;
+    }
+  });
+</script>

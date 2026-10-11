@@ -1,19 +1,31 @@
-<footer class="my-5">
-  <!-- <p class="text-center text-sm text-slate-500"> -->
-  <!--   Copyright © {new Date().getFullYear()} Astroship. All rights reserved. -->
-  <!-- </p> -->
-  <!-- <!-- -->
-  <!--   Can we ask you a favor 🙏 -->
-  <!--   Please keep this backlink on your website if possible. -->
-  <!--   or Purchase a commercial license from https://web3templates.com -->
-  <!-- --> 
-  <!-- <p class="text-center text-xs text-slate-500 mt-1"> -->
-  <!--   Made by <a -->
-  <!--     href="https://web3templates.com" -->
-  <!--     target="_blank" -->
-  <!--     rel="noopener" -->
-  <!--     class="hover:underline"> -->
-  <!--     Web3Templates -->
-  <!--   </a> -->
-  <!-- </p> -->
+---
+import Container from "@components/container.astro";
+import { Icon } from "astro-icon/components";
+---
+
+<footer class="border-t border-line">
+  <Container>
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 py-10 text-sm text-muted">
+      <a href="/" class="font-serif text-2xl text-ink">Heyl <span class="italic">Productions</span></a>
+      <nav aria-label="Footer" class="flex flex-wrap gap-x-6 gap-y-2">
+        <a href="/service" class="hover:text-pine">Services</a>
+        <a href="/portfolio" class="hover:text-pine">Portfolio</a>
+        <a href="/blog" class="hover:text-pine">Blog</a>
+        <a href="/about" class="hover:text-pine">About</a>
+        <a href="/contact" class="hover:text-pine">Contact</a>
+      </nav>
+      <div class="flex items-center gap-4 text-ink">
+        <a href="https://instagram.com/heylproductions" aria-label="Instagram" target="_blank" rel="noopener" class="hover:text-pine">
+          <Icon name="mdi:instagram" class="w-6 h-6" />
+        </a>
+        <a href="https://youtube.com/@erickheyl8293" aria-label="YouTube" target="_blank" rel="noopener" class="hover:text-pine">
+          <Icon name="mdi:youtube" class="w-6 h-6" />
+        </a>
+        <a href="mailto:erick@heylproductions.com,samantha@heylproductions.com" aria-label="Email Erick and Sammie" class="hover:text-pine">
+          <Icon name="mdi:email" class="w-6 h-6" />
+        </a>
+      </div>
+    </div>
+    <p class="pb-10 text-sm text-muted">Proudly serving Poway, Greater San Diego, and beyond.</p>
+  </Container>
 </footer>

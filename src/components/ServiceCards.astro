@@ -1,0 +1,42 @@
+---
+// The four arch-topped service cards from the homepage design.
+const services = [
+  {
+    numeral: "i.",
+    title: "Wedding films",
+    description: "Ceremony and reception coverage, a cinematic highlight reel, and full-length edits on request.",
+    link: { text: "Wedding packages", href: "/service#weddings" },
+  },
+  {
+    numeral: "ii.",
+    title: "Business promos",
+    description: "Short-form, Instagram-ready, always cinematic. At least one 60-second edit per shoot.",
+    link: { text: "Promo videos", href: "/service#business" },
+  },
+  {
+    numeral: "iii.",
+    title: "Events & recaps",
+    description: "Launches, fundraisers and team parties, covered discreetly so you can enjoy the event.",
+    link: { text: "Event coverage", href: "/service#events" },
+  },
+  {
+    numeral: "iv.",
+    title: "Custom projects",
+    description: "Training videos, testimonials, internal comms. Tell us the idea; we'll work out the details.",
+    link: { text: "Start a project", href: "/service#custom" },
+  },
+];
+---
+
+<div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+  {
+    services.map((service) => (
+      <article class="bg-sand rounded-arch px-8 pt-20 pb-9 text-center flex flex-col items-center gap-4">
+        <span class="font-serif italic text-2xl text-pine">{service.numeral}</span>
+        <h3 class="text-4xl leading-none">{service.title}</h3>
+        <p class="text-muted leading-relaxed flex-grow">{service.description}</p>
+        <a href={service.link.href} class="text-link">{service.link.text}</a>
+      </article>
+    ))
+  }
+</div>

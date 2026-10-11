@@ -1,0 +1,90 @@
+---
+import Layout from "@layouts/Layout.astro";
+import Container from "@components/container.astro";
+import BlogCard from "@components/BlogCard.astro";
+import { get_all_posts, BLOG_CATEGORIES, CATEGORY_LABEL, type BlogCategory, type BlogPost } from "@models/blog_posts";
+
+// Reads live from the database so new posts appear without a redeploy.
+export const prerender = false;
+
+const requested = Astro.url.searchParams.get("category");
+const activeCategory = BLOG_CATEGORIES.includes(requested as BlogCategory) ? (requested as BlogCategory) : null;
+
+let posts: BlogPost[] = [];
+let loadError = false;
+try {
+  posts = await get_all_posts();
+} catch (err) {
+  console.error("Failed to load blog posts:", err);
+  loadError = true;
+}
+
+// Only offer filters for categories that actually have posts.
+const usedCategories = BLOG_CATEGORIES.filter((c) => posts.some((p) => p.category === c));
+const visible = activeCategory ? posts.filter((p) => p.category === activeCategory) : posts;
+const [featured, ...rest] = visible;
+---
+
+<Layout title="Blog" description="Stories, tips and behind-the-scenes notes on wedding, promo and event videography in San Diego.">
+  <Container>
+    <header class="text-center max-w-3xl mx-auto pt-12 pb-12">
+      <p class="eyebrow mb-5">Blog</p>
+      <h1 class="text-6xl md:text-7xl leading-none mb-6">The <span class="italic text-pine">Journal</span></h1>
+      <p class="text-lg leading-relaxed text-muted">Stories, tips and notes from behind the camera.</p>
+    </header>
+
+    {
+      usedCategories.length > 1 && (
+        <nav aria-label="Filter posts by category" class="flex flex-wrap justify-center gap-2 pb-14">
+          <a
+            href="/blog"
+            class:list={["rounded-full px-5 py-2 text-sm font-semibold border transition", !activeCategory ? "bg-ink text-paper border-ink" : "border-line hover:border-ink"]}
+            aria-current={!activeCategory ? "page" : undefined}>
+            All
+          </a>
+          {usedCategories.map((c) => (
+            <a
+              href={`/blog?category=${c}`}
+              class:list={["rounded-full px-5 py-2 text-sm font-semibold border transition", activeCategory === c ? "bg-ink text-paper border-ink" : "border-line hover:border-ink"]}
+              aria-current={activeCategory === c ? "page" : undefined}>
+              {CATEGORY_LABEL[c]}
+            </a>
+          ))}
+        </nav>
+      )
+    }
+
+    <div class="pb-28">
+      {loadError && <p class="text-center text-muted">The blog couldn't be loaded right now. Please try again in a moment.</p>}
+      {!loadError && visible.length === 0 && <p class="text-center text-muted">No posts here yet. Check back soon.</p>}
+
+      {
+        featured && (
+          <a href={`/blog/${featured.slug}`} class="group grid lg:grid-cols-2 gap-10 items-center mb-20">
+            {featured.image_url ? (
+              <img src={featured.image_url} alt="" class="w-full aspect-[16/10] object-cover rounded-xl transition group-hover:opacity-90" />
+            ) : (
+              <div class="w-full aspect-[16/10] rounded-xl bg-stone flex items-center justify-center">
+                <span class="font-serif italic text-5xl text-muted">{CATEGORY_LABEL[featured.category]}</span>
+              </div>
+            )}
+            <div class="flex flex-col gap-4">
+              <span class="eyebrow">{CATEGORY_LABEL[featured.category]} · {featured.date_label}</span>
+              <span class="font-serif text-5xl leading-tight group-hover:text-pine transition-colors">{featured.title}</span>
+              <span class="text-lg text-muted leading-relaxed">{featured.body.split(/\n\s*\n/)[0]}</span>
+              <span class="text-link self-start mt-2">Read the post</span>
+            </div>
+          </a>
+        )
+      }
+
+      {
+        rest.length > 0 && (
+          <div class="grid gap-x-8 gap-y-14 md:grid-cols-2 lg:grid-cols-3 border-t border-line pt-16">
+            {rest.map((post) => <BlogCard post={post} showExcerpt />)}
+          </div>
+        )
+      }
+    </div>
+  </Container>
+</Layout>

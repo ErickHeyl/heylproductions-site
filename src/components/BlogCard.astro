@@ -1,0 +1,30 @@
+---
+import { CATEGORY_LABEL, excerpt, type BlogPost } from "@models/blog_posts";
+
+export interface Props {
+  post: BlogPost;
+  showExcerpt?: boolean;
+}
+
+const { post, showExcerpt = false } = Astro.props;
+---
+
+<a href={`/blog/${post.slug}`} class="group flex flex-col gap-3">
+  {
+    post.image_url ? (
+      <img
+        src={post.image_url}
+        alt=""
+        loading="lazy"
+        class="w-full aspect-[4/3] object-cover rounded-xl transition group-hover:opacity-90"
+      />
+    ) : (
+      <div class="w-full aspect-[4/3] rounded-xl bg-stone flex items-center justify-center p-8 transition group-hover:bg-line">
+        <span class="font-serif italic text-3xl text-muted text-center">{CATEGORY_LABEL[post.category]}</span>
+      </div>
+    )
+  }
+  <span class="eyebrow mt-2">{CATEGORY_LABEL[post.category]} · {post.date_label}</span>
+  <span class="font-serif text-3xl leading-tight group-hover:text-pine transition-colors">{post.title}</span>
+  {showExcerpt && <span class="text-muted leading-relaxed">{excerpt(post.body)}</span>}
+</a>

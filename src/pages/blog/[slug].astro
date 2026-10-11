@@ -1,62 +1,93 @@
 ---
-import { getCollection } from "astro:content";
 import Layout from "@layouts/Layout.astro";
 import Container from "@components/container.astro";
+import BlogCard from "@components/BlogCard.astro";
+import {
+  get_post_by_slug,
+  get_recent_posts,
+  CATEGORY_LABEL,
+  excerpt,
+  paragraphs,
+  type BlogCategory,
+  type BlogPost,
+} from "@models/blog_posts";
 
-// Generate a new path for every collection entry
-export async function getStaticPaths() {
-  const blogEntries = await getCollection("blog");
-  return blogEntries.map((entry) => ({
-    params: { slug: entry.slug },
-    props: { entry },
-  }));
+export const prerender = false;
+
+const RELATED_SERVICE: Record<BlogCategory, { label: string; href: string } | null> = {
+  weddings: { label: "Wedding films", href: "/service#weddings" },
+  business: { label: "Business promo videos", href: "/service#business" },
+  events: { label: "Event coverage & recaps", href: "/service#events" },
+  general: null,
+};
+
+const { slug } = Astro.params;
+
+let post: BlogPost | null = null;
+let more: BlogPost[] = [];
+try {
+  post = slug ? await get_post_by_slug(slug) : null;
+  if (post) {
+    more = (await get_recent_posts(4)).filter((p) => p.slug !== post!.slug).slice(0, 3);
+  }
+} catch (err) {
+  console.error("Failed to load blog post:", err);
 }
 
-// Get the entry directly from the prop on render
-const { entry } = Astro.props;
-const { Content } = await entry.render();
+if (!post) {
+  // An empty 404 response makes Astro render the custom 404 page.
+  return new Response(null, { status: 404 });
+}
+
+const related = RELATED_SERVICE[post.category];
 ---
 
-<Layout title={entry.data.title}>
+<Layout title={post.title} description={excerpt(post.body, 155)} image={post.image_url ?? undefined}>
   <Container>
-    <div class="mx-auto max-w-3xl mt-14">
-      <span class="text-blue-400 uppercase tracking-wider text-sm font-medium">
-        {entry.data.category}
-      </span>
-      <h1
-        class="text-4xl lg:text-5xl font-bold lg:tracking-tight mt-1 lg:leading-tight">
-        {entry.data.title}
-      </h1>
-      <div class="flex gap-2 mt-3 items-center flex-wrap md:flex-nowrap">
-        <span class="text-gray-400">
-          {entry.data.author}
-        </span>
-        <span class="text-gray-400">•</span>
-        <time
-          class="text-gray-400"
-          datetime={entry.data.publishDate.toISOString()}>
-          {entry.data.publishDate.toDateString()}
-        </time>
-        <span class="text-gray-400 hidden md:block">•</span>
-        <div class="w-full md:w-auto flex flex-wrap gap-3">
-          {
-            entry.data.tags.map((tag) => (
-              <span class="text-sm text-gray-500">#{tag}</span>
-            ))
-          }
-        </div>
-      </div>
-    </div>
+    <article class="max-w-3xl mx-auto pt-12 pb-24">
+      <a href="/blog" class="text-sm font-semibold text-muted hover:text-pine">← All posts</a>
+      <header class="text-center mt-10 mb-12">
+        <p class="eyebrow mb-5">
+          <a href={`/blog?category=${post.category}`} class="hover:underline">{CATEGORY_LABEL[post.category]}</a> · {post.date_label}
+        </p>
+        <h1 class="text-5xl md:text-6xl leading-[1.05]">{post.title}</h1>
+      </header>
 
-    <div class="mx-auto prose prose-lg mt-6 max-w-3xl">
-      <Content />
-    </div>
-    <div class="text-center mt-8">
-      <a
-        href="/blog"
-        class="bg-gray-100 px-5 py-3 rounded-md hover:bg-gray-200 transition"
-        >← Back to Blog</a
-      >
-    </div>
+      {post.image_url && <img src={post.image_url} alt="" class="w-full rounded-xl object-cover mb-12" />}
+
+      <div class="flex flex-col gap-6">
+        {paragraphs(post.body).map((p) => <p class="text-lg md:text-xl leading-relaxed text-ink/85 whitespace-pre-line">{p}</p>)}
+      </div>
+
+      <div class="mt-16 pt-10 border-t border-line flex flex-col sm:flex-row sm:items-center justify-between gap-6">
+        {
+          related ? (
+            <p class="text-muted">
+              Related: <a href={related.href} class="text-link text-ink">{related.label}</a>
+            </p>
+          ) : (
+            <span />
+          )
+        }
+        <a href="/contact" class="btn-primary">Start your inquiry</a>
+      </div>
+    </article>
   </Container>
+
+  {
+    more.length > 0 && (
+      <section class="bg-sand">
+        <Container>
+          <div class="py-24">
+            <h2 class="text-5xl leading-none mb-12">
+              More from the <span class="italic">Journal</span>
+            </h2>
+            <div class="grid gap-8 md:grid-cols-3">
+              {more.map((p) => <BlogCard post={p} />)}
+            </div>
+          </div>
+        </Container>
+      </section>
+    )
+  }
 </Layout>

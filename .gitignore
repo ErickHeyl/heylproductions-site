@@ -21,3 +21,9 @@ pnpm-debug.log*
 
 # macOS-specific files
 .DS_Store
+
+# Vercel build output
+.vercel
+
+# Local blog photo uploads (no Blob token)
+public/uploads/
