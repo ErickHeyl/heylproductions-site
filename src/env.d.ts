@@ -5,6 +5,7 @@ interface ImportMetaEnv {
   readonly DATABASE_URL?: string;
   readonly BLOG_ADMIN_PASSWORD?: string;
   readonly BLOB_READ_WRITE_TOKEN?: string;
+  readonly BLOB_READ_WRITE_TOKEN_PUB_READ_WRITE_TOKEN?: string;
 }
 
 interface ImportMeta {

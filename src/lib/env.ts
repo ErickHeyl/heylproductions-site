@@ -10,4 +10,8 @@ export const databaseUrl = (): string | undefined => read("POSTGRES_URL") ?? rea
 
 export const adminPassword = (): string => read("BLOG_ADMIN_PASSWORD") ?? "";
 
-export const blobToken = (): string | undefined => read("BLOB_READ_WRITE_TOKEN");
+// The Blob store was connected in Vercel with the prefix
+// "BLOB_READ_WRITE_TOKEN_PUB", so its token has that longer name. Prefer it over
+// the plain name, which on this project belongs to an older store.
+export const blobToken = (): string | undefined =>
+  read("BLOB_READ_WRITE_TOKEN_PUB_READ_WRITE_TOKEN") ?? read("BLOB_READ_WRITE_TOKEN");
