@@ -6,7 +6,7 @@ import vercel from "@astrojs/vercel";
 
 // https://astro.build/config
 export default defineConfig({
-  site: "https://heylproductions.vercel.app",
+  site: "https://www.heylproductions.com",
   // Pages are static/prerendered by default. Anything that reads blog posts
   // from Postgres (home, blog, admin) or handles a request (API routes) opts
   // out with `export const prerender = false` and runs as a Vercel function.
@@ -18,7 +18,7 @@ export default defineConfig({
     // Keep the admin screens and API routes out of the sitemap. On-demand
     // pages aren't discovered automatically, so the public ones are listed.
     sitemap({
-      customPages: ["/", "/service", "/blog"].map((path) => new URL(path, "https://heylproductions.vercel.app").href),
+      customPages: ["/", "/service", "/blog"].map((path) => new URL(path, "https://www.heylproductions.com").href),
       filter: (page) => !/\/(admin|api)(\/|$)/.test(new URL(page).pathname),
     }),
     icon(),
