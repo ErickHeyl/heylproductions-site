@@ -11,7 +11,9 @@ export default defineConfig({
   // from Postgres (home, blog, admin) or handles a request (API routes) opts
   // out with `export const prerender = false` and runs as a Vercel function.
   output: "static",
-  adapter: vercel(),
+  // Vercel resizes <Image>s on on-demand pages (the homepage); Astro's own
+  // /_image endpoint 404s there in production.
+  adapter: vercel({ imageService: true }),
   integrations: [
     // Base styles come from src/styles/global.css (imported by Layout.astro).
     tailwind({ applyBaseStyles: false }),
