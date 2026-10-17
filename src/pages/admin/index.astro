@@ -2,6 +2,7 @@
 import Layout from "@layouts/Layout.astro";
 import Container from "@components/container.astro";
 import { isAuthenticated } from "@lib/adminAuth";
+import { databaseUrl } from "@lib/env";
 
 export const prerender = false;
 
@@ -9,7 +10,7 @@ if (!isAuthenticated(Astro.cookies)) {
   return Astro.redirect("/admin/login");
 }
 
-const usingSampleData = !import.meta.env.POSTGRES_URL;
+const usingSampleData = !databaseUrl();
 ---
 
 <Layout title="Admin" noindex>
