@@ -2,6 +2,7 @@
 import Layout from "@layouts/Layout.astro";
 import Container from "@components/container.astro";
 import { get_posts_by_category, type BlogCategory, type BlogPost } from "@models/blog_posts";
+import { BLOG_ENABLED } from "@data/features";
 
 // Rendered per request so each service's related blog posts stay current.
 export const prerender = false;
@@ -90,7 +91,7 @@ const processSteps = [
 
 const related: Partial<Record<BlogCategory, BlogPost[]>> = {};
 try {
-  for (const category of ["weddings", "business", "events"] as BlogCategory[]) {
+  for (const category of BLOG_ENABLED ? (["weddings", "business", "events"] as BlogCategory[]) : []) {
     related[category] = await get_posts_by_category(category, 2);
   }
 } catch (err) {

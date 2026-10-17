@@ -18,8 +18,11 @@ export default defineConfig({
     // Keep the admin screens and API routes out of the sitemap. On-demand
     // pages aren't discovered automatically, so the public ones are listed.
     sitemap({
-      customPages: ["/", "/service", "/blog"].map((path) => new URL(path, "https://www.heylproductions.com").href),
-      filter: (page) => !/\/(admin|api)(\/|$)/.test(new URL(page).pathname),
+      // Add "/blog" back here when the blog is turned on.
+      customPages: ["/", "/service"].map((path) => new URL(path, "https://www.heylproductions.com").href),
+      // While the blog is off (src/data/features.ts) it stays out too; drop
+      // "blog" from this pattern when turning it back on.
+      filter: (page) => !/\/(admin|api|blog)(\/|$)/.test(new URL(page).pathname),
     }),
     icon(),
   ],

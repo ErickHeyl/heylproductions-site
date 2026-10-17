@@ -1,11 +1,12 @@
 ---
 import Container from "@components/container.astro";
 import { Astronav, MenuItems, MenuIcon } from "astro-navbar";
+import { BLOG_ENABLED } from "@data/features";
 
 const menuitems = [
   { title: "Services", path: "/service" },
   { title: "Portfolio", path: "/portfolio" },
-  { title: "Blog", path: "/blog" },
+  ...(BLOG_ENABLED ? [{ title: "Blog", path: "/blog" }] : []),
   { title: "About", path: "/about" },
 ];
 

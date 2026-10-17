@@ -6,6 +6,7 @@ import ServiceCards from "@components/ServiceCards.astro";
 import VideoEmbed from "@components/VideoEmbed.astro";
 import BlogCard from "@components/BlogCard.astro";
 import { get_recent_posts, type BlogPost } from "@models/blog_posts";
+import { BLOG_ENABLED } from "@data/features";
 import yelpEvent from "@assets/photos/yelp-event.jpg";
 import erickSammie from "@assets/photos/erick-sammie.jpg";
 import onSet from "@assets/photos/on-set.jpg";
@@ -23,7 +24,7 @@ const reels = [
 
 let posts: BlogPost[] = [];
 try {
-  posts = await get_recent_posts(3);
+  if (BLOG_ENABLED) posts = await get_recent_posts(3);
 } catch (err) {
   console.error("Failed to load recent blog posts for the homepage:", err);
 }
