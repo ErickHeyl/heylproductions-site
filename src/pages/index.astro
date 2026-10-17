@@ -8,7 +8,7 @@ import BlogCard from "@components/BlogCard.astro";
 import { get_recent_posts, type BlogPost } from "@models/blog_posts";
 import { BLOG_ENABLED } from "@data/features";
 import yelpEvent from "@assets/photos/yelp-event.jpg";
-import erickSammie from "@assets/photos/erick-sammie.jpg";
+import erickSammie from "@assets/photos/erick-sammie-laughing.jpg";
 import onSet from "@assets/photos/on-set.jpg";
 
 // Rendered per request so new blog posts show up without a redeploy.
@@ -91,10 +91,10 @@ try {
         <div class="flex-1 grid grid-cols-2 gap-5 items-end w-full">
           <Image
             src={erickSammie}
-            alt="Erick and Sammie Heyl"
+            alt="Erick and Sammie Heyl laughing together in a field"
             widths={[320, 640]}
             sizes="(min-width: 1024px) 300px, 45vw"
-            class="w-full aspect-[3/4.2] object-cover object-[62%_40%] rounded-xl"
+            class="w-full aspect-[3/4.2] object-cover rounded-xl"
           />
           <Image
             src={onSet}
